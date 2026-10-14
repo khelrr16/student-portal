@@ -1,160 +1,244 @@
 <x-guest-layout>
     <div
-        x-data="{ 
-            register: {{ $errors->register->any() ? 'true' : 'false' }}
+        class="login-shell"
+        x-data="{
+            showPassword: false,
+            activeSlide: 0,
+            paused: false,
+            slides: [
+                {
+                    image: '{{ asset('images/auth/school-binan-front.jpg') }}',
+                    alt: 'The front view of a school with rizal statue in the foreground',
+                    caption: 'A clear path for every application'
+                },
+                {
+                    image: '{{ asset('images/auth/students-court-left.jpg') }}',
+                    alt: 'The left side of a school court with students sitting on the benches and a school building in the background',
+                    caption: 'Keep your school community moving forward'
+                },
+                {
+                    image: '{{ asset('images/auth/students-court-center.jpg') }}',
+                    alt: 'The center of a school court with students sitting on the benches and a school building in the background',
+                    caption: 'Make every admission decision count'
+                }
+            ],
+            startSlideshow() {
+                window.setInterval(() => {
+                    if (!this.paused) {
+                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                    }
+                }, 5200);
+            }
         }"
-        :class="{ 'active': register }">
+        x-init="startSlideshow()"
+    >
+        <section class="login-card" aria-label="Administrator portal sign in">
+            <div class="login-showcase">
+                <div class="showcase-noise" aria-hidden="true"></div>
+                <div class="showcase-orbit showcase-orbit--one" aria-hidden="true"></div>
+                <div class="showcase-orbit showcase-orbit--two" aria-hidden="true"></div>
 
-        <!-- Image 1 -->
-        <div
-            style="background-image: url('/images/auth/image2.webp');"
-            class="absolute left-[10%] w-full h-full bg-cover">
-        </div>
+                <div class="showcase-content">
+                    <div class="showcase-kicker">
+                        <span class="kicker-dot" aria-hidden="true"></span>
+                        Administration portal - 2026
+                    </div>
 
-        <!-- Image 2 -->
-        <div
-            style="background-image: url('/images/auth/image1.png');"
-            class="absolute w-full h-full bg-cover bg-right wipe-effect">
-        </div>
+                    <h1>Lead with<br><em>clarity.</em></h1>
+                    <p class="showcase-intro">
+                        Sign in to manage registration sessions, review applicants, and keep
+                        every admission moving forward.
+                    </p>
 
-        <!-- White Wipe -->
-        <div
-            class="form-container p-10 w-2/5 absolute overflow-hidden bg-white dark:bg-gray-900 dark:text-gray-300">
-
-            <div class="h-3/4 w-100">
-                <!-- LOGIN FORM -->
-                <div 
-                    x-show="!register"
-                    x-transition:enter="transition transform duration-500"
-                    x-transition:enter-start="-translate-x-full opacity-0"
-                    x-transition:enter-end="translate-x-0 opacity-100"
-                    x-transition:leave="transition transform duration-500"
-                    x-transition:leave-start="translate-x-0 opacity-100"
-                    x-transition:leave-end="-translate-x-full opacity-0"
-
-                    class="login-form absolute inset-0 w-full">
-                    <div class="m-5">
-                        <div class="h-1/4 flex items-center justify-center my-10">
-                            <span class="text-4xl font-semibold">Login</span>
+                    <div
+                        class="school-image-frame"
+                        aria-label="School administration highlights"
+                        @mouseenter="paused = true"
+                        @mouseleave="paused = false"
+                        @focusin="paused = true"
+                        @focusout="paused = false"
+                    >
+                        {{-- Replace these placeholder illustrations with school images when ready. --}}
+                        <div class="school-slideshow" role="region" aria-roledescription="carousel" aria-label="School highlights">
+                            <template x-for="(slide, index) in slides" :key="slide.image">
+                                <figure
+                                    class="school-slide"
+                                    :class="{ 'school-slide--active': activeSlide === index }"
+                                    x-show="activeSlide === index"
+                                    x-cloak
+                                    x-transition:enter="school-slide-transition"
+                                    x-transition:enter-start="school-slide-enter-start"
+                                    x-transition:enter-end="school-slide-enter-end"
+                                    x-transition:leave="school-slide-transition"
+                                    x-transition:leave-start="school-slide-leave-start"
+                                    x-transition:leave-end="school-slide-leave-end"
+                                >
+                                    <img :src="slide.image" :alt="slide.alt" class="school-image">
+                                    <figcaption class="image-frame-caption">
+                                        <span class="caption-line" aria-hidden="true"></span>
+                                        <span x-text="slide.caption"></span>
+                                    </figcaption>
+                                </figure>
+                            </template>
                         </div>
 
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
+                        <div class="school-slideshow-controls">
+                            <button
+                                type="button"
+                                class="slideshow-arrow"
+                                @click="activeSlide = (activeSlide + slides.length - 1) % slides.length"
+                                aria-label="Show previous school highlight"
+                            >
+                                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                            </button>
 
-                            <div>
-                                <!-- Email Address -->
-                                <div>
-                                    <x-auth.input-label-error for="email" value="Email" bag="login" />
-                                    <x-auth.text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                                </div>
-
-                                <!-- Password -->
-                                <div class="mt-4">
-                                    <x-auth.input-label-error for="password" value="Password" bag="login" />
-                                    <x-auth.text-input id="password" class="block mt-1 w-full"
-                                        type="password"
-                                        name="password"
-                                        required autocomplete="current-password" />
-                                </div>
-
-                                <div class="mt-4 flex items-center justify-between gap-5">
-                                    <!-- Remember Me -->
-                                    <label for="remember_me" class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                        <input
-                                            id="remember_me"
-                                            type="checkbox"
-                                            name="remember"
-                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
-
-                                        <span class="ml-2">Remember me</span>
-                                    </label>
-
-                                    @if (Route::has('password.request'))
-                                        <a
-                                            href="{{ route('password.request') }}"
-                                            class="text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-100">
-                                            Forgot password
-                                        </a>
-                                    @endif
-                                </div>
+                            <div class="slideshow-dots" role="tablist" aria-label="Choose school highlight">
+                                <template x-for="(slide, index) in slides" :key="`dot-${index}`">
+                                    <button
+                                        type="button"
+                                        class="slideshow-dot"
+                                        :class="{ 'slideshow-dot--active': activeSlide === index }"
+                                        @click="activeSlide = index"
+                                        :aria-label="`Show school highlight ${index + 1}`"
+                                        :aria-selected="activeSlide === index"
+                                        role="tab"
+                                    ></button>
+                                </template>
                             </div>
 
-                            <div class="flex flex-col items-center justify-center mt-4 gap-4">
-                                <x-auth.primary-button class="ms-3">
-                                    Log in
-                                </x-auth.primary-button>
-                            </div>
-                        </form>
-
-                        <div class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                            Don't have account? <button @click="register = true" class="text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-100">Register</a>
+                            <button
+                                type="button"
+                                class="slideshow-arrow"
+                                @click="activeSlide = (activeSlide + 1) % slides.length"
+                                aria-label="Show next school highlight"
+                            >
+                                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- REGISTER FORM -->
-                <div 
-                    x-show="register"
-                    x-transition:enter="transition transform duration-500"
-                    x-transition:enter-start="translate-x-full opacity-0"
-                    x-transition:enter-end="translate-x-0 opacity-100"
-                    x-transition:leave="transition transform duration-500"
-                    x-transition:leave-start="translate-x-0 opacity-100"
-                    x-transition:leave-end="translate-x-full opacity-0"
-
-                    class="register-form absolute inset-0 w-full">
-                    <div class="m-5">
-                        <div class="h-1/4 flex items-center justify-center mt-10 mb-3">
-                            <span class="text-4xl font-semibold">Register</span>    
+                    <div class="showcase-meta">
+                        <div>
+                            <span class="meta-value">01</span>
+                            <span class="meta-label">Admission<br>oversight</span>
                         </div>
-
-                        <form method="POST" action="{{ route('register') }}">
-                            @csrf
-
-                            <!-- Name -->
-                            <div>
-                                <x-auth.input-label-error for="name" value="Name" bag="register" />
-                                <x-auth.text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-                            </div>
-
-                            <!-- Email Address -->
-                            <div class="mt-4">
-                                <x-auth.input-label-error for="email" value="Email" bag="register" />
-                                <x-auth.text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-                                <x-auth.input-error :messages="$errors->register->get('email')" class="mt-2" />
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mt-4">
-                                <x-auth.input-label-error for="password" value="Password" bag="register" />
-
-                                <x-auth.text-input id="password" class="block mt-1 w-full"
-                                                type="password"
-                                                name="password"
-                                                required autocomplete="new-password" />
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div class="mt-4">
-                                <x-auth.input-label-error for="password_confirmation" value="Confirm Password" bag="register" />
-                                <x-auth.text-input id="password_confirmation" class="block mt-1 w-full"
-                                                type="password"
-                                                name="password_confirmation" required autocomplete="new-password" />
-                            </div>
-
-                            <div class="flex flex-col items-center justify-center mt-4 gap-4">
-                                <x-auth.primary-button class="ms-3">
-                                    Register
-                                </x-auth.primary-button>
-                            </div>
-                        </form>
-                        
-                        <div class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                            Already have account? <button @click="register = false" class="text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-100">Login</button>
+                        <div class="meta-rule" aria-hidden="true"></div>
+                        <div>
+                            <span class="meta-value">&#8734;</span>
+                            <span class="meta-label">Better decisions<br>ahead</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="login-form-panel">
+                <div class="login-form-inner">
+                    <a href="{{ url('/') }}" class="school-brand" aria-label="{{ config('app.school_name', config('app.name', 'School Portal')) }} home">
+                        <span class="school-brand-mark" aria-hidden="true">
+                            <i class="fa-solid fa-school" aria-hidden="true"></i>
+                        </span>
+                        <span class="school-brand-copy">
+                            <strong>{{ config('app.school_name', config('app.name', 'School Portal')) }}</strong>
+                            <small>Administrator portal</small>
+                        </span>
+                    </a>
+
+                    <div class="form-heading">
+                        <p class="form-eyebrow">Authorized access</p>
+                        <h2>Welcome back,<br>administrator.</h2>
+                        <p>Sign in to manage sessions, review applicants, and keep your school's admissions on track.</p>
+                    </div>
+
+                    @if (session('status'))
+                        <div class="status-message" role="status">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="error-summary" role="alert">
+                            <span class="error-summary-icon" aria-hidden="true">!</span>
+                            <span>{{ $errors->first() }}</span>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}" class="login-form">
+                        @csrf
+
+                        <div class="form-field">
+                            <label for="email">Administrator email</label>
+                            <div class="input-shell @error('email') input-shell--error @enderror">
+                                <i class="input-icon fa-solid fa-envelope" aria-hidden="true"></i>
+                                <input
+                                    id="email"
+                                    class="portal-input"
+                                    type="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    placeholder="admin@school.edu"
+                                    required
+                                    autofocus
+                                    autocomplete="username"
+                                >
+                            </div>
+                            @error('email')
+                                <p class="field-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-field">
+                            <div class="field-label-row">
+                                <label for="password">Password</label>
+                                @if (Route::has('password.request'))
+                                    <a href="{{ route('password.request') }}" class="subtle-link">Forgot password?</a>
+                                @endif
+                            </div>
+                            <div class="input-shell @error('password') input-shell--error @enderror">
+                                <i class="input-icon fa-solid fa-lock" aria-hidden="true"></i>
+                                <input
+                                    id="password"
+                                    class="portal-input portal-input--password"
+                                    x-bind:type="showPassword ? 'text' : 'password'"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    required
+                                    autocomplete="current-password"
+                                >
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    @click="showPassword = !showPassword"
+                                    x-bind:aria-label="showPassword ? 'Hide password' : 'Show password'"
+                                >
+                                    <i x-show="!showPassword" class="fa-solid fa-eye" aria-hidden="true"></i>
+                                    <i x-show="showPassword" x-cloak class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="field-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-options">
+                            <label class="remember-option" for="remember_me">
+                                <input id="remember_me" type="checkbox" name="remember">
+                                <span class="custom-checkbox" aria-hidden="true"></span>
+                                <span>Keep me signed in</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="portal-submit">
+                            <span>Sign in as administrator</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </form>
+
+                    <div class="secure-note">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        <span>Protected access for authorized school staff.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </x-guest-layout>

@@ -17,10 +17,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('admin'),
-        ]);
+        $admin = User::firstOrNew(['email' => 'admin@gmail.com']);
+        $admin->name = 'Admin';
+        $admin->role = 'super_admin';
+        $admin->email_verified_at ??= now();
+
+        if (! $admin->exists) {
+            $admin->password = bcrypt('Enrollment123');
+        }
+
+        $admin->save();
     }
 }

@@ -1,10 +1,10 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-medium text-slate-900">
             {{ __('Complete Profile') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p class="mt-1 text-sm text-slate-600">
             {{ __("Complete your profile information and email address to proceed.") }}
         </p>
     </header>
@@ -57,11 +57,11 @@
             >
                 <option value="">-- Select Year --</option>
 
+                <option value="grade10" {{ old('year') == 'grade10' ? 'selected' : '' }}>
+                    Grade 10
+                </option>
                 <option value="grade11" {{ old('year') == 'grade11' ? 'selected' : '' }}>
                     Grade 11
-                </option>
-                <option value="grade12" {{ old('year') == 'grade12' ? 'selected' : '' }}>
-                    Grade 12
                 </option>
             </select>
 
@@ -77,7 +77,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
+                    class="text-sm text-slate-600"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>

@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'school_name' => env('SCHOOL_NAME', env('APP_NAME', 'School Portal')),
+
+    'school_logo' => env('SCHOOL_LOGO'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -65,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Manila',
 
     /*
     |--------------------------------------------------------------------------
